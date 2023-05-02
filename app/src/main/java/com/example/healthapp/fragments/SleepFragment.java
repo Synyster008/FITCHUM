@@ -79,7 +79,7 @@ public class SleepFragment extends Fragment {
                         Double sleepData = document.getDouble("Actual Sleep Hours");
                         if (sleepData != null) {
                             todaySleepTextView = view.findViewById(R.id.todaySleepTextView);
-                            todaySleepTextView.setText(String.format("Today you slept %.2f hours", sleepData));
+                            todaySleepTextView.setText(String.format("Today you slept %.2f minutes", sleepData));
                         } else {
                             Log.e("GraphTestActivity", "Sleep duration is null in document: " + document.getId());
                         }
@@ -111,7 +111,7 @@ public class SleepFragment extends Fragment {
 
                     // Display the average value in the "Last 7 days Avg sleep" TextView
                     TextView avgSleepTextView = view.findViewById(R.id.last7DaysAvgTextView);
-                    avgSleepTextView.setText(String.format(Locale.getDefault(), "Last 7 days Avg sleep: %.1f hours", avgSleepData7Days));
+                    avgSleepTextView.setText(String.format(Locale.getDefault(), "Last 7 days Avg sleep: %.1f minutes", avgSleepData7Days));
                     // Store the average values in the Firebase database document for the current user
                     DocumentReference userRef = db.collection("Users").document(currentUser.getUid());
                     Map<String, Object> data = new HashMap<>();
@@ -144,7 +144,7 @@ public class SleepFragment extends Fragment {
 
                     // Display the average value in the "Last 30 days Avg sleep" TextView
                     TextView avgSleepTextView = view.findViewById(R.id.last30DaysAvgTextView);
-                    avgSleepTextView.setText(String.format(Locale.getDefault(), "Last 30 days Avg sleep: %.1f hours", avgSleepData30Days));
+                    avgSleepTextView.setText(String.format(Locale.getDefault(), "Last 30 days Avg sleep: %.1f minutes", avgSleepData30Days));
                     // Store the average values in the Firebase database document for the current user
                     DocumentReference userRef = db.collection("Users").document(currentUser.getUid());
                     Map<String, Object> data = new HashMap<>();

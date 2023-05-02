@@ -1,119 +1,53 @@
 package com.example.healthapp;
 
-import android.graphics.Color;
-import android.os.Bundle;
+
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class HeartActivity extends AppCompatActivity {
-    private static final String TAG = "HeartRateActivity";
-    private FirebaseFirestore db;
-    private String userId;
-    private ArrayList<Entry> chartDataList;
+
+    private Button mRefreshButton;
+
+    private SharedPreferences mSharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heart);
+        mSharedPreferences= HeartActivity.this.getSharedPreferences("app_prefs", MODE_PRIVATE);
 
-        db = FirebaseFirestore.getInstance();
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        chartDataList = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
+            //ask for permission
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 0);
+        }
 
-        getLastSevenDaysData();
-    }
 
-    private void getLastSevenDaysData() {
-        CollectionReference userHeartDataRef = db.collection("Data").document(userId).collection("HeartData");
+        mRefreshButton = findViewById(R.id.refresh_button);
 
-        Query query = userHeartDataRef.orderBy(FieldPath.documentId(), Query.Direction.DESCENDING).limit(1);
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    DocumentSnapshot lastDateDoc = queryDocumentSnapshots.getDocuments().get(0);
-                    String lastDateStr = lastDateDoc.getId();
-
-                    for (int i = 0; i < 7; i++) {
-                        String dateStr = lastDateStr;
-                        if (i > 0) {
-                            dateStr = getDateBefore(lastDateStr, i);
-                        }
-
-                        DocumentReference dateHeartDataRef = userHeartDataRef.document(dateStr);
-                        CollectionReference hourHeartDataRef = dateHeartDataRef.collection(getCurrentHourStr());
-
-                        Query query = hourHeartDataRef.orderBy("timestamp", Query.Direction.DESCENDING).limit(1);
-                        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                if (!queryDocumentSnapshots.isEmpty()) {
-                                    DocumentSnapshot lastHeartRateDoc = queryDocumentSnapshots.getDocuments().get(0);
-                                    int lastHeartRate = lastHeartRateDoc.getLong("HeartRate").intValue();
-                                    long lastTimestamp = lastHeartRateDoc.getTimestamp("timestamp").getSeconds();
-
-                                    chartDataList.add(new Entry(lastTimestamp, lastHeartRate));
-
-                                    if (chartDataList.size() == 7) {
-                                        plotDataOnChart();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
+            public void onClick(View v) {
+                startActivity(new Intent(HeartActivity.this,HeartRateMonitor.class));
             }
         });
     }
 
-    private String getDateBefore(String dateStr, int days) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
-        Calendar calendar = Calendar.getInstance();
-        try {
-            Date date = dateFormat.parse(dateStr);
-            calendar.setTime(date);
-            calendar.add(Calendar.DATE, -days);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return dateFormat.format(calendar.getTime());
-    }
 
-    private String getCurrentHourStr() {
-        SimpleDateFormat hourFormat = new SimpleDateFormat("HH");
-        return "hour_" + hourFormat.format(new Date());
-    }
 
-    private void plotDataOnChart() {
-        LineChart chart = findViewById(R.id.lineChart);
-
-        LineDataSet dataSet = new LineDataSet(chartDataList, "Heart Rate Data");
-        dataSet.setDrawCircles(false);
-        dataSet.setDrawValues(false);
-        dataSet.setColor(Color.BLUE);
-
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate();
-    }
 }

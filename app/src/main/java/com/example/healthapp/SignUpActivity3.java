@@ -80,7 +80,7 @@ public class SignUpActivity3 extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(SignUpActivity3.this, " Time Data added successfully", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(SignUpActivity3.this, TestActivity.class);
+                                    Intent intent = new Intent(SignUpActivity3.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }

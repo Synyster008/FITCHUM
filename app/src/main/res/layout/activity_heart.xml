@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
-    tools:context=".HeartActivity" >
+    android:background="#0E1822"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/refresh_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/round_button"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Track"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.754" />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="CHECK CHECK CHECK"
-        android:textAlignment="center"
-        android:textColor="#00ceb4"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChart"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="8dp"
-        android:background="#0E1822"
-        android:elevation="2dp"
-        android:padding="16dp"
-        android:clipToPadding="false"
-        android:clipChildren="false"
-        android:layout_gravity="center" />
+        android:id="@+id/text"
+        android:layout_width="145dp"
+        android:layout_height="68dp"
+        android:text="_____"
+        android:textColor="#fff"
 
-</RelativeLayout>
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.657"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/preview"
+        app:layout_constraintVertical_bias="0.527" />
+
+    <SurfaceView
+        android:id="@+id/preview"
+        android:layout_width="402dp"
+        android:layout_height="586dp"
+        android:layout_margin="5sp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="0.5"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"></SurfaceView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
